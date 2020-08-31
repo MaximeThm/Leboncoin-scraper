@@ -2,13 +2,27 @@ import pylbc
 import pandas as pd
 from datetime import date
 
+print('Minimum desired surface area ?')
+min_square = int(input())
+print('Maximum desired surface area ?')
+max_square = int(input())
+print('Minimum price ?')
+min_price = int(input())
+print('Maximum price ?')
+max_price = int(input())
+
+print('City ?')
+city = input()
+print('ZIP code ?')
+zip_code = int(input())
+
 query = pylbc.Search()
-query.set_square(15, 50)
-query.set_price(300, 1000)
+query.set_square(min_square, max_square)
+query.set_price(min_price, max_price)
 query.set_category('locations')
 query.set_real_estate_types(['appartement'])
-query.add_city('Thionville', '57100')
-query.set_query('meuble gare')
+query.add_city(city, zip_code)
+query.set_query('')
 
 i = 0
 df = pd.DataFrame()
@@ -31,32 +45,4 @@ df['Prix/m2'] = df['Prix'] / df['Surface']
 df['Ancienneté'] = pd.to_datetime(date.today()) - pd.to_datetime(df['Date'])
 df['Date'] = date.today()
 
-
-def append_df_to_excel(filename, df, sheet_name='Data', startrow=None,
-                       truncate_sheet=False,):
-
-    from openpyxl import load_workbook
-
-    writer = pd.ExcelWriter(filename, engine='openpyxl')
-
-    try:
-        writer.book = load_workbook(filename)
-
-        if startrow is None and sheet_name in writer.book.sheetnames:
-            startrow = writer.book[sheet_name].max_row
-
-        if truncate_sheet and sheet_name in writer.book.sheetnames:
-            idx = writer.book.sheetnames.index(sheet_name)
-            writer.book.remove(writer.book.worksheets[idx])
-            writer.book.create_sheet(sheet_name, idx)
-
-        writer.sheets = {ws.title: ws for ws in writer.book.worksheets}
-    except FileNotFoundError:
-        pass
-
-    df.to_excel(writer, sheet_name, startrow=startrow, index=None, header=None)
-
-    writer.save()
-
 print(df.mean(axis=0))
-append_df_to_excel(r'/Users/maximethomas/Desktop/Data.xlsx', df)
