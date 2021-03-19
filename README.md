@@ -4,3 +4,4 @@ This project scrapes the real estate ads from the Leboncoin website (Leboncoin i
 
 The script returns the number of ads, the average price, the average price per square meter and the average seniority of all ads meeting your criteria.
 
+/!\ The API used by this scraper is depreciated. The website refuses all requests :(
